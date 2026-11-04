@@ -10,4 +10,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  background-color: #120e18;
+  background-image: url('/bg.jpg');
+  background-repeat: repeat;
+  background-size: 160px auto;
 }

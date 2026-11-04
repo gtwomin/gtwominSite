@@ -26,7 +26,7 @@ onUnmounted(() => {
 <template>
   <main class="page-shell">
     <div class="player-container">
-      <!-- 框外大箭頭：直接對準右上角靜音按鈕 -->
+      <!-- 框外高對比醒目大箭頭：直接對準右上角靜音按鈕 -->
       <div
         class="outer-arrow-wrapper"
         :class="{ 'is-dismissed': isDismissed }"
@@ -38,10 +38,19 @@ onUnmounted(() => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <!-- 白色厚外框，確保在滿版背景圖上清晰凸顯不混淆 -->
           <path
-            d="M16 4V24M16 24L7 15M16 24L25 15"
+            d="M16 3V24M16 24L6 14M16 24L26 14"
+            stroke="#ffffff"
+            stroke-width="10"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <!-- 鮮紅色主箭頭 -->
+          <path
+            d="M16 3V24M16 24L6 14M16 24L26 14"
             stroke="#ef4444"
-            stroke-width="4.5"
+            stroke-width="5"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
@@ -71,9 +80,9 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 80px 20px 40px;
-  background:
-    radial-gradient(ellipse at 50% 0%, rgb(216 230 255 / 60%), transparent 55%),
-    #f5f7fb;
+  background-image: url('/bg.jpg');
+  background-repeat: repeat;
+  background-size: 160px auto;
   box-sizing: border-box;
 }
 
@@ -82,13 +91,13 @@ onUnmounted(() => {
   width: min(100%, 960px);
 }
 
-/* 框外上方大箭頭定位 */
+/* 框外上方大箭頭定位與高對比光暈 */
 .outer-arrow-wrapper {
   position: absolute;
   bottom: 100%;
   right: 142px;
   transform: translateX(50%);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -104,9 +113,11 @@ onUnmounted(() => {
 }
 
 .big-arrow-svg {
-  width: 54px;
-  height: 54px;
-  filter: drop-shadow(0 4px 10px rgba(239, 68, 68, 0.45));
+  width: 62px;
+  height: 62px;
+  filter:
+    drop-shadow(0 6px 14px rgba(0, 0, 0, 0.85))
+    drop-shadow(0 0 10px rgba(255, 255, 255, 0.9));
 }
 
 /* 箭頭上下彈跳動畫 */
@@ -124,7 +135,8 @@ onUnmounted(() => {
   overflow: hidden;
   border-radius: 20px;
   background: #000000;
-  box-shadow: 0 24px 64px rgb(31 57 91 / 16%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
 }
 
 .video-wrapper {
@@ -147,6 +159,7 @@ onUnmounted(() => {
 @media (max-width: 640px) {
   .page-shell {
     padding: 60px 12px 24px;
+    background-size: 130px auto;
   }
 
   .video-card {
@@ -155,12 +168,12 @@ onUnmounted(() => {
 
   .outer-arrow-wrapper {
     right: 116px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .big-arrow-svg {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
   }
 }
 </style>
