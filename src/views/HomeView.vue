@@ -5,16 +5,16 @@ const isDismissed = ref(false)
 let timer: ReturnType<typeof setTimeout> | null = null
 
 function handleBlur() {
-  // 當使用者點擊 iframe (例如操作影片、開聲音、暫停等)，焦點切換到 iframe 觸發 blur
+  // 使用者點擊 iframe (例如點選開啟聲音或操作播放器) 時觸發 blur 淡出
   isDismissed.value = true
 }
 
 onMounted(() => {
   window.addEventListener('blur', handleBlur)
-  // 若 12 秒後未互動也平滑淡出，避免遮擋影片
+  // 15 秒後若未互動也平滑淡出，不干擾觀看
   timer = setTimeout(() => {
     isDismissed.value = true
-  }, 12000)
+  }, 15000)
 })
 
 onUnmounted(() => {
@@ -25,60 +25,106 @@ onUnmounted(() => {
 
 <template>
   <main class="page-shell">
-    <section class="video-card">
-      <div class="video-wrapper">
-        <iframe
-          src="https://www.youtube.com/embed/vbQV4AsDTiY?autoplay=1&mute=1&playsinline=1&rel=0"
-          title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
-
-        <!-- 箭頭與開聲音提示 -->
-        <div class="sound-hint" :class="{ 'is-dismissed': isDismissed }">
-          <div class="hint-arrow" aria-hidden="true">
-            <svg
-              viewBox="0 0 24 24"
-              class="arrow-svg"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="12" y1="19" x2="12" y2="5" />
-              <polyline points="5 12 12 5 19 12" />
-            </svg>
-          </div>
-          <div class="hint-bubble">
-            <span>開聲音</span>
-            <span class="speaker-emoji">🔊</span>
-          </div>
-        </div>
+    <div class="player-container">
+      <!-- 框外大箭頭：直接對準右上角靜音按鈕 -->
+      <div
+        class="outer-arrow-wrapper"
+        :class="{ 'is-dismissed': isDismissed }"
+        aria-hidden="true"
+      >
+        <svg
+          class="big-arrow-svg"
+          viewBox="0 0 32 32"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16 4V24M16 24L7 15M16 24L25 15"
+            stroke="#ef4444"
+            stroke-width="4.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
       </div>
-    </section>
+
+      <!-- 影片播放器卡片 -->
+      <section class="video-card">
+        <div class="video-wrapper">
+          <iframe
+            src="https://www.youtube.com/embed/vbQV4AsDTiY?autoplay=1&mute=1&playsinline=1&rel=0"
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+    </div>
   </main>
 </template>
 
 <style scoped>
 .page-shell {
-  display: grid;
+  display: flex;
   min-height: 100svh;
-  place-items: center;
-  padding: 24px 16px;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 40px;
   background:
     radial-gradient(ellipse at 50% 0%, rgb(216 230 255 / 60%), transparent 55%),
     #f5f7fb;
   box-sizing: border-box;
 }
 
-.video-card {
+.player-container {
+  position: relative;
   width: min(100%, 960px);
+}
+
+/* 框外上方大箭頭定位 */
+.outer-arrow-wrapper {
+  position: absolute;
+  bottom: 100%;
+  right: 114px;
+  transform: translateX(50%);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 20;
+  animation: bounce-down 1.4s infinite ease-in-out;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.outer-arrow-wrapper.is-dismissed {
+  opacity: 0;
+  transform: translateX(50%) translateY(-10px);
+}
+
+.big-arrow-svg {
+  width: 54px;
+  height: 54px;
+  filter: drop-shadow(0 4px 10px rgba(239, 68, 68, 0.45));
+}
+
+/* 箭頭上下彈跳動畫 */
+@keyframes bounce-down {
+  0%, 100% {
+    transform: translateX(50%) translateY(0);
+  }
+  50% {
+    transform: translateX(50%) translateY(10px);
+  }
+}
+
+.video-card {
+  width: 100%;
   overflow: hidden;
   border-radius: 20px;
   background: #000000;
-  box-shadow: 0 24px 64px rgb(31 57 91 / 15%);
+  box-shadow: 0 24px 64px rgb(31 57 91 / 16%);
 }
 
 .video-wrapper {
@@ -97,96 +143,24 @@ onUnmounted(() => {
   border: 0;
 }
 
-/* 提示開聲音箭頭與氣泡樣式 */
-.sound-hint {
-  position: absolute;
-  top: 52px;
-  right: 64px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  pointer-events: none;
-  z-index: 10;
-  animation: float-pulse 1.8s infinite ease-in-out;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.sound-hint.is-dismissed {
-  opacity: 0;
-  transform: translateY(8px);
-  pointer-events: none;
-}
-
-.hint-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ef4444;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
-}
-
-.arrow-svg {
-  width: 24px;
-  height: 24px;
-}
-
-.hint-bubble {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.5);
-  white-space: nowrap;
-  user-select: none;
-}
-
-.speaker-emoji {
-  font-size: 14px;
-}
-
-@keyframes float-pulse {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
+/* 行動版適配 */
 @media (max-width: 640px) {
   .page-shell {
-    padding: 12px;
+    padding: 60px 12px 24px;
   }
 
   .video-card {
     border-radius: 14px;
   }
 
-  .sound-hint {
-    top: 42px;
-    right: 48px;
-    gap: 2px;
+  .outer-arrow-wrapper {
+    right: 92px;
+    margin-bottom: 8px;
   }
 
-  .arrow-svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .hint-bubble {
-    padding: 4px 10px;
-    font-size: 11px;
-  }
-
-  .speaker-emoji {
-    font-size: 12px;
+  .big-arrow-svg {
+    width: 40px;
+    height: 40px;
   }
 }
 </style>
