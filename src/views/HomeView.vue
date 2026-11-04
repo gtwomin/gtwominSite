@@ -86,7 +86,7 @@ onUnmounted(() => {
 .outer-arrow-wrapper {
   position: absolute;
   bottom: 100%;
-  right: 114px;
+  right: 142px;
   transform: translateX(50%);
   margin-bottom: 12px;
   display: flex;
@@ -154,7 +154,7 @@ onUnmounted(() => {
   }
 
   .outer-arrow-wrapper {
-    right: 92px;
+    right: 116px;
     margin-bottom: 8px;
   }
 
