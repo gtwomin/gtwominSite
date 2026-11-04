@@ -1,14 +1,31 @@
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const isDismissed = ref(false)
+let timer: ReturnType<typeof setTimeout> | null = null
+
+function handleBlur() {
+  // 當使用者點擊 iframe (例如操作影片、開聲音、暫停等)，焦點切換到 iframe 觸發 blur
+  isDismissed.value = true
+}
+
+onMounted(() => {
+  window.addEventListener('blur', handleBlur)
+  // 若 12 秒後未互動也平滑淡出，避免遮擋影片
+  timer = setTimeout(() => {
+    isDismissed.value = true
+  }, 12000)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('blur', handleBlur)
+  if (timer) clearTimeout(timer)
+})
+</script>
+
 <template>
   <main class="page-shell">
     <section class="video-card">
-      <header class="video-header">
-        <a class="wordmark" href="/" aria-label="gtwomin 首頁">gtwomin<span>.</span></a>
-        <div class="status-pill">
-          <span class="status-dot" aria-hidden="true"></span>
-          AUTOPLAY
-        </div>
-      </header>
-
       <div class="video-wrapper">
         <iframe
           src="https://www.youtube.com/embed/vbQV4AsDTiY?autoplay=1&mute=1&playsinline=1&rel=0"
@@ -17,21 +34,29 @@
           referrerpolicy="strict-origin-when-cross-origin"
           allowfullscreen
         ></iframe>
-      </div>
 
-      <footer class="video-footer">
-        <div class="sound-tip">
-          <svg class="tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M11 5L6 9H2v6h4l5 4V5z" />
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-          </svg>
-          <p class="tip-text">
-            <strong>瀏覽器播放限制說明：</strong>
-            根據 Chrome / Safari / Edge 等現代瀏覽器的自動播放政策，網頁進場自動播放<strong>必須預設靜音 (Mute)</strong>；如需聲音，請直接點擊影片播放列上的喇叭按鈕解除靜音。
-          </p>
+        <!-- 箭頭與開聲音提示 -->
+        <div class="sound-hint" :class="{ 'is-dismissed': isDismissed }">
+          <div class="hint-arrow" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              class="arrow-svg"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="19" x2="12" y2="5" />
+              <polyline points="5 12 12 5 19 12" />
+            </svg>
+          </div>
+          <div class="hint-bubble">
+            <span>開聲音</span>
+            <span class="speaker-emoji">🔊</span>
+          </div>
         </div>
-      </footer>
+      </div>
     </section>
   </main>
 </template>
@@ -41,70 +66,26 @@
   display: grid;
   min-height: 100svh;
   place-items: center;
-  padding: 32px 20px;
+  padding: 24px 16px;
   background:
     radial-gradient(ellipse at 50% 0%, rgb(216 230 255 / 60%), transparent 55%),
     #f5f7fb;
-  color: #13253e;
   box-sizing: border-box;
 }
 
 .video-card {
   width: min(100%, 960px);
   overflow: hidden;
-  border: 1px solid #e3e9f1;
   border-radius: 20px;
-  background: #ffffff;
-  box-shadow: 0 24px 64px rgb(31 57 91 / 10%);
-}
-
-.video-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 24px;
-  border-bottom: 1px solid #edf0f5;
-}
-
-.wordmark {
-  color: #142740;
-  font-size: 18px;
-  font-weight: 750;
-  letter-spacing: -0.06em;
-  text-decoration: none;
-}
-
-.wordmark span {
-  color: #5278d8;
-}
-
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border: 1px solid #d8eee4;
-  border-radius: 999px;
-  background: #f1faf5;
-  color: #27734f;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #42a877;
-  box-shadow: 0 0 0 3px rgb(66 168 119 / 18%);
+  background: #000000;
+  box-shadow: 0 24px 64px rgb(31 57 91 / 15%);
 }
 
 .video-wrapper {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: #000;
+  background: #000000;
 }
 
 .video-wrapper iframe {
@@ -116,55 +97,95 @@
   border: 0;
 }
 
-.video-footer {
-  padding: 16px 24px;
-  border-top: 1px solid #edf0f5;
-  background: #fbfcfe;
-}
-
-.sound-tip {
+/* 提示開聲音箭頭與氣泡樣式 */
+.sound-hint {
+  position: absolute;
+  top: 52px;
+  right: 64px;
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  color: #5a6a80;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+  z-index: 10;
+  animation: float-pulse 1.8s infinite ease-in-out;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.sound-hint.is-dismissed {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+.hint-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+}
+
+.arrow-svg {
+  width: 24px;
+  height: 24px;
+}
+
+.hint-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #ffffff;
   font-size: 13px;
-  line-height: 1.6;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.5);
+  white-space: nowrap;
+  user-select: none;
 }
 
-.tip-icon {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  margin-top: 2px;
-  stroke: #5278d8;
+.speaker-emoji {
+  font-size: 14px;
 }
 
-.tip-text {
-  margin: 0;
-}
-
-.tip-text strong {
-  color: #1f3350;
+@keyframes float-pulse {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 @media (max-width: 640px) {
   .page-shell {
-    padding: 16px 12px;
+    padding: 12px;
   }
 
   .video-card {
     border-radius: 14px;
   }
 
-  .video-header {
-    padding: 14px 18px;
+  .sound-hint {
+    top: 42px;
+    right: 48px;
+    gap: 2px;
   }
 
-  .video-footer {
-    padding: 14px 18px;
+  .arrow-svg {
+    width: 20px;
+    height: 20px;
   }
 
-  .sound-tip {
+  .hint-bubble {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  .speaker-emoji {
     font-size: 12px;
   }
 }
