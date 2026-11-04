@@ -1,76 +1,68 @@
 <template>
   <main class="page-shell">
-    <section class="welcome" aria-labelledby="page-title">
-      <header class="welcome-header">
+    <section class="video-card">
+      <header class="video-header">
         <a class="wordmark" href="/" aria-label="gtwomin 首頁">gtwomin<span>.</span></a>
         <div class="status-pill">
           <span class="status-dot" aria-hidden="true"></span>
-          BUILD SUCCESS
+          AUTOPLAY
         </div>
       </header>
 
-      <div class="welcome-content">
-        <div class="checkmark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="m6.5 12.5 3.7 3.7 7.8-8" />
-          </svg>
-        </div>
-
-        <p class="eyebrow">你的個人網站專案</p>
-        <h1 id="page-title">建置成功<span>。</span></h1>
-        <p class="description">
-          專案已經準備就緒。接下來，就從你的第一個個人頁面開始。
-        </p>
+      <div class="video-wrapper">
+        <iframe
+          src="https://www.youtube.com/embed/vbQV4AsDTiY?autoplay=1&mute=1&playsinline=1&rel=0"
+          title="YouTube video player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
       </div>
 
-      <footer class="welcome-footer">
-        <div class="stack-heading">
-          <span class="footer-label">PROJECT STACK</span>
-          <span class="footer-caption">已安裝並完成設定</span>
+      <footer class="video-footer">
+        <div class="sound-tip">
+          <svg class="tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 5L6 9H2v6h4l5 4V5z" />
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+          </svg>
+          <p class="tip-text">
+            <strong>瀏覽器播放限制說明：</strong>
+            根據 Chrome / Safari / Edge 等現代瀏覽器的自動播放政策，網頁進場自動播放<strong>必須預設靜音 (Mute)</strong>；如需聲音，請直接點擊影片播放列上的喇叭按鈕解除靜音。
+          </p>
         </div>
-        <ul class="stack-list" aria-label="已設定的技術">
-          <li>Vue 3</li>
-          <li>TypeScript</li>
-          <li>Pinia</li>
-          <li>Vue Router</li>
-        </ul>
-        <p class="next-step">
-          下一步：從 <code>src/views/HomeView.vue</code> 開始編輯首頁。
-        </p>
       </footer>
     </section>
-    <p class="page-note">BUILT WITH VITE <span>·</span> READY FOR YOUR IDEAS</p>
   </main>
 </template>
 
 <style scoped>
 .page-shell {
-  position: relative;
   display: grid;
   min-height: 100svh;
   place-items: center;
-  overflow: hidden;
-  padding: 48px 24px 28px;
+  padding: 32px 20px;
   background:
-    radial-gradient(ellipse at 50% 0%, rgb(216 230 255 / 55%), transparent 48%),
+    radial-gradient(ellipse at 50% 0%, rgb(216 230 255 / 60%), transparent 55%),
     #f5f7fb;
   color: #13253e;
+  box-sizing: border-box;
 }
 
-.welcome {
-  width: min(100%, 720px);
+.video-card {
+  width: min(100%, 960px);
   overflow: hidden;
   border: 1px solid #e3e9f1;
-  border-radius: 24px;
-  background: rgb(255 255 255 / 94%);
-  box-shadow: 0 28px 80px rgb(31 57 91 / 10%);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 24px 64px rgb(31 57 91 / 10%);
 }
 
-.welcome-header {
+.video-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 26px 32px;
+  padding: 18px 24px;
   border-bottom: 1px solid #edf0f5;
 }
 
@@ -82,8 +74,7 @@
   text-decoration: none;
 }
 
-.wordmark span,
-.welcome-content h1 span {
+.wordmark span {
   color: #5278d8;
 }
 
@@ -91,14 +82,14 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 11px;
+  padding: 6px 12px;
   border: 1px solid #d8eee4;
   border-radius: 999px;
   background: #f1faf5;
   color: #27734f;
-  font-size: 10px;
-  font-weight: 750;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
 .status-dot {
@@ -106,154 +97,75 @@
   height: 7px;
   border-radius: 50%;
   background: #42a877;
-  box-shadow: 0 0 0 3px rgb(66 168 119 / 13%);
+  box-shadow: 0 0 0 3px rgb(66 168 119 / 18%);
 }
 
-.welcome-content {
-  padding: 58px 64px 54px;
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
 }
 
-.checkmark {
-  display: grid;
-  width: 52px;
-  height: 52px;
-  margin-bottom: 29px;
-  place-items: center;
-  border-radius: 16px;
-  background: #edf3ff;
-  color: #4770d0;
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
-.checkmark svg {
-  width: 25px;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
-}
-
-.eyebrow,
-.footer-label {
-  margin: 0;
-  color: #718097;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-.welcome-content h1 {
-  margin: 12px 0 16px;
-  color: #142740;
-  font-size: clamp(42px, 8vw, 66px);
-  font-weight: 750;
-  letter-spacing: -0.075em;
-  line-height: 1.08;
-}
-
-.description {
-  max-width: 440px;
-  margin: 0;
-  color: #66758a;
-  font-size: 16px;
-  line-height: 1.8;
-}
-
-.welcome-footer {
-  padding: 24px 32px 28px;
+.video-footer {
+  padding: 16px 24px;
   border-top: 1px solid #edf0f5;
   background: #fbfcfe;
 }
 
-.stack-heading {
+.sound-tip {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: flex-start;
   gap: 12px;
+  color: #5a6a80;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-.footer-label {
-  font-size: 10px;
+.tip-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  stroke: #5278d8;
 }
 
-.footer-caption {
-  color: #8a97a9;
-  font-size: 12px;
-}
-
-.stack-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 14px 0 21px;
-  padding: 0;
-  list-style: none;
-}
-
-.stack-list li {
-  padding: 8px 11px;
-  border: 1px solid #e4e9f0;
-  border-radius: 8px;
-  background: #fff;
-  color: #43536a;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.next-step {
+.tip-text {
   margin: 0;
-  color: #718097;
-  font-size: 12px;
-  line-height: 1.7;
 }
 
-.next-step code {
-  color: #3e5f9d;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.95em;
+.tip-text strong {
+  color: #1f3350;
 }
 
-.page-note {
-  position: absolute;
-  right: 24px;
-  bottom: 18px;
-  left: 24px;
-  margin: 0;
-  color: #93a0b2;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-align: center;
-}
-
-.page-note span {
-  padding: 0 5px;
-  color: #5278d8;
-}
-
-@media (max-width: 560px) {
+@media (max-width: 640px) {
   .page-shell {
-    padding: 20px 16px 48px;
+    padding: 16px 12px;
   }
 
-  .welcome {
-    border-radius: 18px;
+  .video-card {
+    border-radius: 14px;
   }
 
-  .welcome-header {
-    padding: 20px;
+  .video-header {
+    padding: 14px 18px;
   }
 
-  .welcome-content {
-    padding: 42px 24px 40px;
+  .video-footer {
+    padding: 14px 18px;
   }
 
-  .welcome-footer {
-    padding: 21px 20px 23px;
-  }
-
-  .footer-caption {
-    font-size: 11px;
+  .sound-tip {
+    font-size: 12px;
   }
 }
 </style>
